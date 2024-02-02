@@ -36,7 +36,7 @@ export default function RoomPage() {
       </Button>
 
       {/*  Room Grid */}
-      <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap">
+      <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-0">
         {rooms.map((room) => (
           <RoomGridItem key={room.id} room={room} />
         ))}
