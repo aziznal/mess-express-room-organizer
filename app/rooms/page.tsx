@@ -1,6 +1,7 @@
 "use client";
 
 import RoomGridItem from "@/components/room";
+import ToggleDarkMode from "@/components/toggle-dark-mode";
 import { Button } from "@/components/ui/button";
 import { Room } from "@/lib/type-helpers";
 import { createClient } from "@/utils/supabase/client";
@@ -29,9 +30,11 @@ export default function RoomPage() {
 
   return (
     <div className="flex flex-col p-4 items-start">
+      <ToggleDarkMode />
+
       <div className="text-2xl font-bold mt-16">Welcome to MessExpress™</div>
 
-      <Button className="mt-6">
+      <Button className="my-6">
         New Room <LucidePlus />
       </Button>
 
