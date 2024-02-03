@@ -9,9 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "./ui/skeleton";
+import { useDeleteRoomMutation } from "@/lib/services/rooms-service";
 
 type RoomGridItemProps = React.HTMLAttributes<HTMLDivElement> & {
   room: Room;
+  onDelete: () => void;
 };
 
 const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
@@ -33,11 +36,17 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
             <DropdownMenuTrigger>
               <LucideMoreHorizontal className="w-fit shrink-0 " />
             </DropdownMenuTrigger>
+
             <DropdownMenuContent>
               <DropdownMenuLabel>Settings</DropdownMenuLabel>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Delete</DropdownMenuItem>
+
+              <DropdownMenuItem onClick={props.onDelete}>
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -49,3 +58,15 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
 RoomGridItem.displayName = "RoomGridItem";
 
 export default RoomGridItem;
+
+export const RoomGridItemSkeleton = () => {
+  return (
+    <Skeleton className="w-full sm:w-[250px] p-4 rounded-md">
+      <Skeleton className="h-[200px] w-full bg-white border-2 rounded-md " />
+
+      <Skeleton className="mt-2 text-lg flex justify-between">
+        <Skeleton className="h-4 bg-slate-300 w-24" />
+      </Skeleton>
+    </Skeleton>
+  );
+};

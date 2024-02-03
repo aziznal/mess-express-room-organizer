@@ -1,32 +1,19 @@
 "use client";
 
-import RoomGridItem from "@/components/room";
+import RoomGridItem, { RoomGridItemSkeleton } from "@/components/room";
 import ToggleDarkMode from "@/components/toggle-dark-mode";
 import { Button } from "@/components/ui/button";
-import { Room } from "@/lib/type-helpers";
-import { createClient } from "@/utils/supabase/client";
+import {
+  useCreateRoomMutation,
+  useDeleteRoomMutation,
+  useGetRoomsQuery,
+} from "@/lib/services/rooms-service";
 import { LucidePlus } from "lucide-react";
-import { useEffect, useState } from "react";
 
 export default function RoomPage() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-
-  const supabase = createClient();
-
-  useEffect(() => {
-    const fetchRooms = async () => {
-      const { data, error } = await supabase.from("rooms").select("*");
-
-      if (error) {
-        console.log("error", error);
-        return;
-      }
-
-      setRooms(data);
-    };
-
-    fetchRooms();
-  }, [supabase]);
+  const roomsQuery = useGetRoomsQuery();
+  const createRoomMutation = useCreateRoomMutation();
+  const deleteRoomMutaion = useDeleteRoomMutation();
 
   return (
     <div className="flex flex-col p-4 items-start">
@@ -34,14 +21,42 @@ export default function RoomPage() {
 
       <div className="text-2xl font-bold mt-16">Welcome to MessExpress™</div>
 
-      <Button className="my-6">
+      <Button
+        className="my-6"
+        disabled={createRoomMutation.isPending}
+        onClick={() =>
+          createRoomMutation.mutate({
+            name: "ABC",
+            width: 123,
+            height: 123,
+          })
+        }
+      >
         New Room <LucidePlus />
       </Button>
 
       {/*  Room Grid */}
       <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-0">
-        {rooms.map((room) => (
-          <RoomGridItem key={room.id} room={room} />
+        {roomsQuery.isLoading && (
+          <>
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+            <RoomGridItemSkeleton />
+          </>
+        )}
+
+        {roomsQuery.data?.map((room) => (
+          <RoomGridItem
+            key={room.id}
+            room={room}
+            onDelete={() => {
+              deleteRoomMutaion.mutate(room.id);
+            }}
+          />
         ))}
       </div>
     </div>
