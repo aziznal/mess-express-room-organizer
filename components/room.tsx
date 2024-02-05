@@ -1,6 +1,6 @@
 import { Room } from "@/lib/type-helpers";
 import { LucideMoreHorizontal } from "lucide-react";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
-import { useDeleteRoomMutation } from "@/lib/services/rooms-service";
+import {
+  useDeleteRoomMutation,
+  useUpdateRoomMutation,
+} from "@/lib/services/rooms-service";
+import UpdateRoom from "./update-room";
 
 type RoomGridItemProps = React.HTMLAttributes<HTMLDivElement> & {
   room: Room;
@@ -19,6 +23,10 @@ type RoomGridItemProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
   ({ room, ...props }, ref) => {
+    const updateRoomMutation = useUpdateRoomMutation();
+
+    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+
     return (
       <div
         ref={ref}
@@ -36,6 +44,17 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
             {room.name}
           </span>
 
+          <UpdateRoom
+            disabled={updateRoomMutation.isPending}
+            isLoading={updateRoomMutation.isPending}
+            onRoomUpdated={async (updatedRoom) => {
+              updateRoomMutation.mutate({ id: room.id, updatedRoom });
+            }}
+            isDialogOpen={isUpdateDialogOpen}
+            setIsDialogOpen={setIsUpdateDialogOpen}
+            room={room}
+          />
+
           <DropdownMenu>
             <DropdownMenuTrigger>
               <LucideMoreHorizontal className="w-fit shrink-0 " />
@@ -46,7 +65,9 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsUpdateDialogOpen(true)}>
+                Edit
+              </DropdownMenuItem>
 
               <DropdownMenuItem onClick={props.onDelete}>
                 Delete

@@ -3,7 +3,6 @@
 import CreateNewRoom from "@/components/create-new-room";
 import RoomGridItem, { RoomGridItemSkeleton } from "@/components/room";
 import ToggleDarkMode from "@/components/toggle-dark-mode";
-import { Button } from "@/components/ui/button";
 import {
   useCreateRoomMutation,
   useDeleteRoomMutation,
@@ -14,7 +13,6 @@ import { NewRoom } from "@/lib/type-helpers";
 export default function RoomPage() {
   const roomsQuery = useGetRoomsQuery();
   const createRoomMutation = useCreateRoomMutation();
-  const updateRoomMutation = useUpdateRoomMutation();
   const deleteRoomMutaion = useDeleteRoomMutation();
 
   return (
@@ -30,6 +28,8 @@ export default function RoomPage() {
           createRoomMutation.mutateAsync(newRoom)
         }
       />
+
+    
 
       {/*  Room Grid */}
       <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-0">
