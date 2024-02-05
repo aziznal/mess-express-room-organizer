@@ -101,7 +101,7 @@ export default function UpdateRoom(props: UpdateRoomProps) {
                   <FormLabel>Width</FormLabel>
 
                   <FormControl>
-                    <Input placeholder="0cm" {...field} type="number" />
+                    <Input placeholder="0 cm" {...field} type="number" />
                   </FormControl>
 
                   <FormMessage />
@@ -117,7 +117,7 @@ export default function UpdateRoom(props: UpdateRoomProps) {
                   <FormLabel>Height</FormLabel>
 
                   <FormControl>
-                    <Input placeholder="0cm" {...field} type="number" />
+                    <Input placeholder="0 cm" {...field} type="number" />
                   </FormControl>
 
                   <FormMessage />

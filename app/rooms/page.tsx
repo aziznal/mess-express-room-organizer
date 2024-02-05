@@ -10,10 +10,14 @@ import {
   useUpdateRoomMutation,
 } from "@/lib/services/rooms-service";
 import { NewRoom } from "@/lib/type-helpers";
+import { useToast } from "@/components/ui/use-toast";
+
 export default function RoomPage() {
   const roomsQuery = useGetRoomsQuery();
   const createRoomMutation = useCreateRoomMutation();
   const deleteRoomMutaion = useDeleteRoomMutation();
+
+  const { toast } = useToast();
 
   return (
     <div className="flex flex-col p-4 items-start">
@@ -24,12 +28,13 @@ export default function RoomPage() {
       <CreateNewRoom
         disabled={createRoomMutation.isPending}
         isLoading={createRoomMutation.isPending}
-        onNewRoomCreated={async (newRoom: NewRoom) =>
-          createRoomMutation.mutateAsync(newRoom)
-        }
+        onNewRoomCreated={async (newRoom: NewRoom) => {
+          await createRoomMutation.mutateAsync(newRoom);
+          toast({
+            title: "Room created succesfully",
+          });
+        }}
       />
-
-    
 
       {/*  Room Grid */}
       <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-0">
@@ -49,8 +54,13 @@ export default function RoomPage() {
           <RoomGridItem
             key={room.id}
             room={room}
-            onDelete={() => {
-              deleteRoomMutaion.mutate(room.id);
+            onDeleted={async () => {
+              await deleteRoomMutaion.mutateAsync(room.id);
+              toast({
+                title: "Room deleted succesfully",
+                description: "asd",
+                variant: "destructive",
+              });
             }}
           />
         ))}

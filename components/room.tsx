@@ -9,16 +9,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Skeleton } from "./ui/skeleton";
 import {
-  useDeleteRoomMutation,
-  useUpdateRoomMutation,
-} from "@/lib/services/rooms-service";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Skeleton } from "./ui/skeleton";
+import { useUpdateRoomMutation } from "@/lib/services/rooms-service";
 import UpdateRoom from "./update-room";
+import { useToast } from "./ui/use-toast";
 
 type RoomGridItemProps = React.HTMLAttributes<HTMLDivElement> & {
   room: Room;
-  onDelete: () => void;
+  onDeleted: () => void;
 };
 
 const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
@@ -26,6 +35,9 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
     const updateRoomMutation = useUpdateRoomMutation();
 
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+    const { toast } = useToast();
 
     return (
       <div
@@ -48,12 +60,40 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
             disabled={updateRoomMutation.isPending}
             isLoading={updateRoomMutation.isPending}
             onRoomUpdated={async (updatedRoom) => {
-              updateRoomMutation.mutate({ id: room.id, updatedRoom });
+              await updateRoomMutation.mutateAsync({
+                id: room.id,
+                updatedRoom,
+              });
+              toast({ title: "Room updated succesfully" });
             }}
             isDialogOpen={isUpdateDialogOpen}
             setIsDialogOpen={setIsUpdateDialogOpen}
             room={room}
           />
+
+          <AlertDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your room.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={props.onDeleted}
+                  className="bg-red-500 hover:bg-red-700"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <DropdownMenu>
             <DropdownMenuTrigger>
@@ -69,7 +109,7 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
                 Edit
               </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={props.onDelete}>
+              <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
