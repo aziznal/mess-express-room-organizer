@@ -34,7 +34,10 @@ type CreateNewRoomProps = {
 };
 
 const formSchema = z.object({
-  name: z.string(),
+  name: z
+    .string()
+    .min(1, { message: "Name must be at least 1 character" })
+    .max(256, { message: "Name can not be more than 256 characters" }),
   height: z.coerce.number().int().positive(),
   width: z.coerce.number().int().positive(),
 });
