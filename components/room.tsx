@@ -25,7 +25,11 @@ const RoomGridItem = forwardRef<HTMLDivElement, RoomGridItemProps>(
         {...props}
         className="w-full group sm:w-[250px] hover:cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors p-4 rounded-md"
       >
-        <div className="h-[200px] w-full bg-white border-2 rounded-md group-hover:bg-slate-100 dark:group-hover:bg-slate-400 transition-colors" />
+        <div className="relative h-[200px] w-full bg-white border-2 rounded-md group-hover:bg-slate-100 dark:group-hover:bg-slate-400 transition-colors">
+          <span className="absolute bottom-2 right-2 text-xs text-slate-400">
+            {room.width}x{room.height}
+          </span>
+        </div>
 
         <div className="mt-2 text-lg flex justify-between">
           <span className="text-ellipsis whitespace-nowrap overflow-x-clip ">
