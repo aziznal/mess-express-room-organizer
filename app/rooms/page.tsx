@@ -58,7 +58,6 @@ export default function RoomPage() {
               await deleteRoomMutaion.mutateAsync(room.id);
               toast({
                 title: "Room deleted succesfully",
-                description: "asd",
                 variant: "destructive",
               });
             }}
