@@ -1,13 +1,14 @@
 "use client";
 
 import CreateNewRoom from "@/components/create-new-room";
-import RoomGridItem, { RoomGridItemSkeleton } from "@/components/room";
+import RoomGridItem, {
+  RoomGridItemSkeleton,
+} from "@/components/room-grid-item";
 import ToggleDarkMode from "@/components/toggle-dark-mode";
 import {
   useCreateRoomMutation,
   useDeleteRoomMutation,
   useGetRoomsQuery,
-  useUpdateRoomMutation,
 } from "@/lib/services/rooms-service";
 import { NewRoom } from "@/lib/type-helpers";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,7 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 export default function RoomPage() {
   const roomsQuery = useGetRoomsQuery();
   const createRoomMutation = useCreateRoomMutation();
-  const deleteRoomMutaion = useDeleteRoomMutation();
+  const deleteRoomMutation = useDeleteRoomMutation();
 
   const { toast } = useToast();
 
@@ -37,7 +38,7 @@ export default function RoomPage() {
       />
 
       {/*  Room Grid */}
-      <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-0">
+      <div className="mt-12 w-full flex flex-col gap-6 sm:flex-row sm:flex-wrap">
         {roomsQuery.isLoading && (
           <>
             <RoomGridItemSkeleton />
@@ -55,7 +56,7 @@ export default function RoomPage() {
             key={room.id}
             room={room}
             onDeleted={async () => {
-              await deleteRoomMutaion.mutateAsync(room.id);
+              await deleteRoomMutation.mutateAsync(room.id);
               toast({
                 title: "Room deleted succesfully",
                 variant: "destructive",
