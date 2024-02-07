@@ -1,4 +1,4 @@
-import { LucideLoader2, LucidePlus } from "lucide-react";
+import { LucideLoader2 } from "lucide-react";
 
 import {
   Dialog,
@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { z } from "zod";
@@ -65,7 +64,6 @@ export default function UpdateRoom(props: UpdateRoomProps) {
     if (props.isDialogOpen) {
       form.reset();
     }
-    console.log(props.isDialogOpen);
   }, [props.isDialogOpen, form]);
 
   return (
