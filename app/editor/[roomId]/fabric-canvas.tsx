@@ -1,30 +1,37 @@
+// @ts-nocheck
+
 import React, { useEffect, useRef } from "react";
 import { fabric } from "fabric";
 
-const FabricCanvas = () => {
+import { Room } from "@/lib/type-helpers";
+import { IStaticCanvasOptions } from "fabric/fabric-impl";
+
+type FabricCanvasProps = {
+  room: Room;
+};
+
+const FabricCanvas = (props: FabricCanvasProps) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    if (!window) return;
+
     const canvas = new fabric.Canvas(canvasRef.current, {
-      height: 400,
-      width: 400,
+      height: window.innerHeight - 40,
+      width: window.innerWidth - 20,
     });
 
-    // Example: Add a circle to the canvas
-    const circle = new fabric.Circle({
-      radius: 20,
-      fill: "lightgreen",
-      left: 100,
-      top: 100,
-    });
-
-    canvas.add(circle);
     canvas.on("mouse:wheel", function (opt) {
       var delta = opt.e.deltaY;
       var zoom = canvas.getZoom();
+
       zoom *= 0.999 ** delta;
-      if (zoom > 20) zoom = 20;
-      if (zoom < 0.01) zoom = 0.01;
+
+      const maxZoomIn = 20;
+      const maxZoomOut = 0.001;
+
+      if (zoom > maxZoomIn) zoom = maxZoomIn;
+      if (zoom < maxZoomOut) zoom = maxZoomOut;
 
       canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
 
@@ -33,32 +40,92 @@ const FabricCanvas = () => {
 
       const vpt = this.viewportTransform;
 
-      if (zoom < 400 / 1000) {
-        vpt[4] = 200 - (1000 * zoom) / 2;
-        vpt[5] = 200 - (1000 * zoom) / 2;
-      } else {
-        if (vpt[4] >= 0) {
-          vpt[4] = 0;
-        } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
-          vpt[4] = canvas.getWidth() - 1000 * zoom;
-        }
+      // Supposed to prevent panning out of bounds but doesn't seem to work
+      // if (zoom < 400 / 1000) {
+      //   vpt[4] = 200 - (1000 * zoom) / 2;
+      //   vpt[5] = 200 - (1000 * zoom) / 2;
+      // } else {
+      //   if (vpt[4] >= 0) {
+      //     vpt[4] = 0;
+      //   } else if (vpt[4] < canvas.getWidth() - 1000 * zoom) {
+      //     vpt[4] = canvas.getWidth() - 1000 * zoom;
+      //   }
+      //   if (vpt[5] >= 0) {
+      //     vpt[5] = 0;
+      //   } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
+      //     vpt[5] = canvas.getHeight() - 1000 * zoom;
+      //   }
+      // }
+    });
 
-        if (vpt[5] >= 0) {
-          vpt[5] = 0;
-        } else if (vpt[5] < canvas.getHeight() - 1000 * zoom) {
-          vpt[5] = canvas.getHeight() - 1000 * zoom;
-        }
+    canvas.on("mouse:down", function (opt) {
+      const evt = opt.e;
+
+      if (evt.altKey === true) {
+        this.isDragging = true;
+        this.selection = false;
+        this.lastPosX = evt.clientX;
+        this.lastPosY = evt.clientY;
       }
     });
+
+    canvas.on("mouse:move", function (opt) {
+      if (this.isDragging) {
+        canvas.setCursor("grab");
+
+        var e = opt.e;
+        var vpt = this.viewportTransform;
+
+        vpt[4] += e.clientX - this.lastPosX;
+        vpt[5] += e.clientY - this.lastPosY;
+
+        this.requestRenderAll();
+
+        this.lastPosX = e.clientX;
+        this.lastPosY = e.clientY;
+      }
+    });
+
+    canvas.on("mouse:up", function (opt) {
+      // on mouse up we want to recalculate new interaction
+      // for all objects, so we call setViewportTransform
+      this.setViewportTransform(this.viewportTransform);
+      this.isDragging = false;
+      this.selection = true;
+    });
+
+    const roomRect = new fabric.Rect({
+      width: props.room.width,
+      height: props.room.height,
+
+      left: canvas.width! / 2 - props.room.width / 2,
+      top: canvas.height! / 2 - props.room.height / 2,
+
+      strokeWidth: 2,
+      fill: "transparent",
+      stroke: "black",
+      strokeUniform: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      lockMovementX: true,
+      lockMovementY: true,
+      selectable: false,
+      hasControls: false,
+      hoverCursor: "default",
+      strokeLineJoin: "round",
+    });
+
+    canvas.add(roomRect);
 
     // Cleanup on component unmount
     return () => {
       canvas.dispose();
     };
-  }, []);
+  }, [props.room]);
 
   return (
-    <div className="border w-fit">
+    <div className="flex items-center justify-center border-2 w-fit h-fit rounded-lg">
       <canvas ref={canvasRef} />
     </div>
   );

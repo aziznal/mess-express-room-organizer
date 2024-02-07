@@ -1,6 +1,8 @@
 "use client";
 
+import { LucideLoader2 } from "lucide-react";
 import FabricCanvas from "./fabric-canvas";
+import { useGetRoomByIdQuery } from "@/lib/services/rooms-service";
 
 type EditorProps = {
   params: {
@@ -9,11 +11,30 @@ type EditorProps = {
 };
 
 export default function Editor(props: EditorProps) {
+  const roomQuery = useGetRoomByIdQuery(props.params.roomId);
+
+  if (roomQuery.isPending) {
+    return (
+      <div className="h-full flex items-center justify-center gap-2">
+        <LucideLoader2 className="animate-spin" /> Loading ...
+      </div>
+    );
+  }
+
+  if (roomQuery.isError) {
+    return (
+      <div className="h-full flex items-center justify-center gap-2">
+        <LucideLoader2 className="animate-spin" /> Error:{" "}
+        {roomQuery.error.message}
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="w-full h-[100dvh] flex items-center justify-center flex-col">
       <h1>Editor (room {props.params.roomId})</h1>
 
-      <FabricCanvas />
+      <FabricCanvas room={roomQuery.data} />
     </div>
   );
 }
