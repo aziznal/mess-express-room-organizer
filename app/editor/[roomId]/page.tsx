@@ -1,14 +1,16 @@
 "use client";
 
 import { LucideLoader2 } from "lucide-react";
-import FabricCanvas from "./fabric-canvas";
 import { useGetRoomByIdQuery } from "@/lib/services/rooms-service";
+import FabricCanvas from "@/components/fabric-canvas";
 
 type EditorProps = {
   params: {
     roomId: string;
   };
 };
+
+export const dynamic = "force-dynamic";
 
 export default function Editor(props: EditorProps) {
   const roomQuery = useGetRoomByIdQuery(props.params.roomId);

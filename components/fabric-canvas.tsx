@@ -4,7 +4,6 @@ import React, { useEffect, useRef } from "react";
 import { fabric } from "fabric";
 
 import { Room } from "@/lib/type-helpers";
-import { IStaticCanvasOptions } from "fabric/fabric-impl";
 
 type FabricCanvasProps = {
   room: Room;
