@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import { fabric } from "fabric";
 
