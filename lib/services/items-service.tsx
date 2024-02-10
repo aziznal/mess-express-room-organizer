@@ -45,7 +45,7 @@ export const useGetItemByIdQuery = (itemId: string) => {
   });
 };
 
-export const useCreateItemMutation = () => {
+export const useCreateItemMutation = () =>
   useMutation({
     mutationFn: async (newRoomItem: NewRoomItem) => {
       const { error } = await supabase.from("items").insert(newRoomItem);
@@ -60,9 +60,8 @@ export const useCreateItemMutation = () => {
       });
     },
   });
-};
 
-export const useUpdateItemMutation = () => {
+export const useUpdateItemMutation = () => 
   useMutation({
     mutationFn: async ({
       itemId,
@@ -86,9 +85,9 @@ export const useUpdateItemMutation = () => {
       });
     },
   });
-};
 
-export const useDeleteItemMutation = () => {
+
+export const useDeleteItemMutation = () => 
   useMutation({
     mutationFn: async (itemId: string) => {
       const { error } = await supabase.from("items").delete().eq("id", itemId);
@@ -103,4 +102,4 @@ export const useDeleteItemMutation = () => {
       });
     },
   });
-};
+
