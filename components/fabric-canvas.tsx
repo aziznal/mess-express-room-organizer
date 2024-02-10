@@ -18,8 +18,8 @@ const FabricCanvas = (props: FabricCanvasProps) => {
     if (!window) return;
 
     const canvas = new fabric.Canvas(canvasRef.current, {
-      height: window.innerHeight - 40,
-      width: window.innerWidth - 20,
+      height: window.innerHeight,
+      width: window.innerWidth,
     });
 
     canvas.on("mouse:wheel", function (opt) {
@@ -126,7 +126,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
   }, [props.room]);
 
   return (
-    <div className="flex items-center justify-center border-2 w-fit h-fit rounded-lg">
+    <div className="flex items-center justify-center w-fit h-fit overflow-hidden">
       <canvas ref={canvasRef} />
     </div>
   );
