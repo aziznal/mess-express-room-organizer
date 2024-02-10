@@ -11,7 +11,6 @@ export const roomKeys = {
   getRoomById: (roomId: string) => [...roomKeys.all, roomId] as const,
 };
 
-// Get rooms
 export const useGetRoomsQuery = () =>
   useQuery({
     queryKey: roomKeys.getRooms(),
@@ -27,7 +26,6 @@ export const useGetRoomsQuery = () =>
     },
   });
 
-// Get room by id
 export const useGetRoomByIdQuery = (roomId: string) =>
   useQuery({
     queryKey: roomKeys.getRoomById(roomId),
@@ -47,7 +45,6 @@ export const useGetRoomByIdQuery = (roomId: string) =>
     },
   });
 
-// Create room
 export const useCreateRoomMutation = () =>
   useMutation({
     mutationFn: async (newRoom: NewRoom) => {
@@ -66,7 +63,6 @@ export const useCreateRoomMutation = () =>
     },
   });
 
-// Update room
 export const useUpdateRoomMutation = () =>
   useMutation({
     mutationFn: async ({
@@ -92,7 +88,6 @@ export const useUpdateRoomMutation = () =>
     },
   });
 
-// Delete room
 export const useDeleteRoomMutation = () =>
   useMutation({
     mutationFn: async (roomId: string) => {
