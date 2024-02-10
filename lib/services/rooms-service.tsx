@@ -5,10 +5,16 @@ import { queryClient } from "../tanstack-query-client";
 
 const supabase = createClient();
 
+export const roomKeys = {
+  all: ["rooms"] as const,
+  getRooms: () => [...roomKeys.all, "get-rooms"] as const,
+  getRoomById: (roomId: string) => [...roomKeys.all, roomId] as const,
+};
+
 // Get rooms
 export const useGetRoomsQuery = () =>
   useQuery({
-    queryKey: ["rooms"],
+    queryKey: roomKeys.getRooms(),
     queryFn: async () => {
       const { data, error } = await supabase.from("rooms").select("*");
 
@@ -22,10 +28,9 @@ export const useGetRoomsQuery = () =>
   });
 
 // Get room by id
-
 export const useGetRoomByIdQuery = (roomId: string) =>
   useQuery({
-    queryKey: ["rooms", roomId],
+    queryKey: roomKeys.getRoomById(roomId),
     queryFn: async () => {
       const { data, error } = await supabase
         .from("rooms")
@@ -56,13 +61,12 @@ export const useCreateRoomMutation = () =>
       }
 
       queryClient.invalidateQueries({
-        queryKey: ["rooms"],
+        queryKey: roomKeys.getRooms(),
       });
     },
   });
 
 // Update room
-
 export const useUpdateRoomMutation = () =>
   useMutation({
     mutationFn: async ({
@@ -83,13 +87,12 @@ export const useUpdateRoomMutation = () =>
       }
 
       queryClient.invalidateQueries({
-        queryKey: ["rooms"],
+        queryKey: roomKeys.all,
       });
     },
   });
 
 // Delete room
-
 export const useDeleteRoomMutation = () =>
   useMutation({
     mutationFn: async (roomId: string) => {
@@ -101,7 +104,7 @@ export const useDeleteRoomMutation = () =>
       }
 
       queryClient.invalidateQueries({
-        queryKey: ["rooms"],
+        queryKey: roomKeys.all,
       });
     },
   });
