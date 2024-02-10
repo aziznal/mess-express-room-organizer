@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     outputFileTracingExcludes: {
-      "**canvas**": ["**canvas**"],
+      "node_modules/canvas/**": ["node_modules/canvas/**"],
     },
   },
   webpack: (config) => {
