@@ -25,7 +25,7 @@ import UpdateRoom from "./update-room";
 import { useToast } from "./ui/use-toast";
 import Link from "next/link";
 
-type RoomGridItemProps = React.HTMLAttributes<HTMLAnchorElement> & {
+type RoomGridItemProps = {
   room: Room;
   onDeleted: () => void;
 };
