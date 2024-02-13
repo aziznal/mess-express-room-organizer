@@ -1,13 +1,5 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { LucideLoader2, LucidePen } from "lucide-react";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { LucideLoader2 } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -66,9 +58,6 @@ export const UpdateItem = ({
 
   return (
     <Dialog onOpenChange={setIsUpdateDialogOpen} open={isUpdateDialogOpen}>
-      <DialogTrigger className="hover:text-slate-400">
-        <LucidePen size="12" />
-      </DialogTrigger>
       <DialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -80,7 +69,7 @@ export const UpdateItem = ({
                   <FormLabel>Name</FormLabel>
 
                   <FormControl>
-                    <Input placeholder="Room name" {...field} />
+                    <Input placeholder="Item name" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -128,11 +117,15 @@ export const UpdateItem = ({
                   <FormLabel>Background Color</FormLabel>
 
                   <FormControl>
-                    <Input
-                      placeholder={item.backgroundColor}
-                      {...field}
-                      type="string"
-                    />
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        className="w-[50px]"
+                        placeholder={item.backgroundColor}
+                        {...field}
+                        type="color"
+                      />
+                      {form.watch().backgroundColor}
+                    </div>
                   </FormControl>
 
                   <FormMessage />
@@ -141,9 +134,9 @@ export const UpdateItem = ({
             />
 
             <DialogFooter>
-              <Button type="submit" className="flex gap-2">
-                Submit
-                {isLoading && <LucideLoader2 className="animate-spin"/>}
+              <Button disabled={isLoading} type="submit" className="flex gap-2">
+                Save
+                {isLoading && <LucideLoader2 className="animate-spin" />}
               </Button>
             </DialogFooter>
           </form>

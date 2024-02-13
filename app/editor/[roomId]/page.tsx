@@ -72,8 +72,8 @@ export default function Editor(props: EditorProps) {
                 name: "Erdem's item",
                 backgroundColor: "#ff0000",
               });
-              
-              toast({title:"Item created succesfully.."})
+
+              toast({ title: "Item created succesfully.." });
             }}
           >
             New Item
@@ -83,19 +83,21 @@ export default function Editor(props: EditorProps) {
 
         <hr className="border-slate-400" />
 
-        {itemsQuery.data?.map((item) => (
-          <ListedRoomItem
-            key={item.id}
-            item={item}
-            onItemDeleted={async () => {
-              await deleteItemMutation.mutateAsync(item.id);
-              toast({
-                title: "Item deleted succesfully",
-                variant: "destructive",
-              });
-            }}
-          />
-        ))}
+        <div className="flex flex-col overflow-y-auto">
+          {itemsQuery.data?.map((item) => (
+            <ListedRoomItem
+              key={item.id}
+              item={item}
+              onItemDeleted={async () => {
+                await deleteItemMutation.mutateAsync(item.id);
+                toast({
+                  title: "Item deleted succesfully",
+                  variant: "destructive",
+                });
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       <FabricCanvas room={roomQuery.data} />
