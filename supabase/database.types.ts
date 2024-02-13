@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -37,6 +37,7 @@ export interface Database {
       items: {
         Row: {
           backgroundColor: string
+          created_at: string
           height: number
           id: string
           name: string
@@ -44,6 +45,7 @@ export interface Database {
         }
         Insert: {
           backgroundColor: string
+          created_at?: string
           height: number
           id?: string
           name: string
@@ -51,6 +53,7 @@ export interface Database {
         }
         Update: {
           backgroundColor?: string
+          created_at?: string
           height?: number
           id?: string
           name?: string
@@ -60,6 +63,7 @@ export interface Database {
       }
       itemsToRooms: {
         Row: {
+          created_at: string
           isLocked: boolean
           itemId: string
           roomId: string
@@ -68,6 +72,7 @@ export interface Database {
           zIndex: number
         }
         Insert: {
+          created_at?: string
           isLocked?: boolean
           itemId: string
           roomId: string
@@ -76,6 +81,7 @@ export interface Database {
           zIndex: number
         }
         Update: {
+          created_at?: string
           isLocked?: boolean
           itemId?: string
           roomId?: string
@@ -117,18 +123,21 @@ export interface Database {
       }
       rooms: {
         Row: {
+          created_at: string
           height: number
           id: string
           name: string
           width: number
         }
         Insert: {
+          created_at?: string
           height: number
           id?: string
           name: string
           width: number
         }
         Update: {
+          created_at?: string
           height?: number
           id?: string
           name?: string

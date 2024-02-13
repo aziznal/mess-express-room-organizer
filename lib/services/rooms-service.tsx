@@ -15,7 +15,10 @@ export const useGetRoomsQuery = () =>
   useQuery({
     queryKey: roomKeys.getRooms(),
     queryFn: async () => {
-      const { data, error } = await supabase.from("rooms").select("*");
+      const { data, error } = await supabase
+        .from("rooms")
+        .select("*")
+        .order("created_at", { ascending: true });
 
       if (error) {
         console.log("error", error);

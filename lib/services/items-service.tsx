@@ -15,7 +15,10 @@ export const useGetItemsQuery = () =>
   useQuery({
     queryKey: itemKeys.getItems(),
     queryFn: async () => {
-      const { data, error } = await supabase.from("items").select("*");
+      const { data, error } = await supabase
+        .from("items")
+        .select("*")
+        .order("created_at", { ascending: true });
 
       if (error) {
         console.log("error", error);
@@ -61,7 +64,7 @@ export const useCreateItemMutation = () =>
     },
   });
 
-export const useUpdateItemMutation = () => 
+export const useUpdateItemMutation = () =>
   useMutation({
     mutationFn: async ({
       itemId,
@@ -86,8 +89,7 @@ export const useUpdateItemMutation = () =>
     },
   });
 
-
-export const useDeleteItemMutation = () => 
+export const useDeleteItemMutation = () =>
   useMutation({
     mutationFn: async (itemId: string) => {
       const { error } = await supabase.from("items").delete().eq("id", itemId);
@@ -102,4 +104,3 @@ export const useDeleteItemMutation = () =>
       });
     },
   });
-
