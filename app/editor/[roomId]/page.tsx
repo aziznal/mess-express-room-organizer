@@ -6,12 +6,16 @@ import FabricCanvas from "@/components/fabric-canvas";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
+  usePlaceItemToRoomMutation,
   useCreateItemMutation,
   useDeleteItemMutation,
   useGetItemsQuery,
+  useGetPlacedItemsByRoomId,
+  useUpdatePlacedItemMutation,
 } from "@/lib/services/items-service";
 import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
+import { UpdatedPlacedItem } from "@/lib/type-helpers";
 
 type EditorProps = {
   params: {
@@ -23,9 +27,32 @@ export const dynamic = "force-dynamic";
 
 export default function Editor(props: EditorProps) {
   const roomQuery = useGetRoomByIdQuery(props.params.roomId);
-  const createItemMutation = useCreateItemMutation();
   const itemsQuery = useGetItemsQuery();
+  const roomItemsQuery = useGetPlacedItemsByRoomId(roomQuery.data?.id);
+
+  const createItemMutation = useCreateItemMutation();
   const deleteItemMutation = useDeleteItemMutation();
+  const placeItemMutation = usePlaceItemToRoomMutation();
+  const updatePlacedItemMutation = useUpdatePlacedItemMutation();
+
+  const createAndPlaceItem = async () => {
+    if (!roomQuery.data?.id) return;
+
+    const newItem = await createItemMutation.mutateAsync({
+      height: 255,
+      width: 366,
+      name: "Erdem's item",
+      backgroundColor: "#ff0000",
+    });
+
+    placeItemMutation.mutate({
+      roomId: roomQuery.data.id,
+      itemId: newItem.id,
+      x: 100,
+      y: 100,
+      zIndex: 1,
+    });
+  };
 
   const { toast } = useToast();
 
@@ -65,16 +92,7 @@ export default function Editor(props: EditorProps) {
           <Button
             variant="secondary"
             className="text-xs"
-            onClick={() => {
-              createItemMutation.mutate({
-                height: 255,
-                width: 366,
-                name: "Erdem's item",
-                backgroundColor: "#ff0000",
-              });
-
-              toast({ title: "Item created succesfully.." });
-            }}
+            onClick={createAndPlaceItem}
           >
             New Item
             <LucidePlus size="20" />
@@ -100,7 +118,23 @@ export default function Editor(props: EditorProps) {
         </div>
       </div>
 
-      <FabricCanvas room={roomQuery.data} />
+      <FabricCanvas
+        room={roomQuery.data}
+        roomItems={roomItemsQuery.data ?? []}
+        onItemUpdated={({
+          itemId,
+          item,
+        }: {
+          itemId: string;
+          item: UpdatedPlacedItem;
+        }) => {
+          updatePlacedItemMutation.mutate({
+            roomId: roomQuery.data?.id,
+            itemId,
+            updatedPlacedItem: item,
+          });
+        }}
+      />
     </div>
   );
 }
