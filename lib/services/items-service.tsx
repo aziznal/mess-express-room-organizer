@@ -137,6 +137,32 @@ export const useDeleteItemMutation = () =>
     },
   });
 
+export const useDeletePlacedItemMutation = () =>
+  useMutation({
+    mutationFn: async ({
+      roomId,
+      itemId,
+    }: {
+      roomId: string;
+      itemId: string;
+    }) => {
+      const { error } = await supabase
+        .from("itemsToRooms")
+        .delete()
+        .eq("itemId", itemId)
+        .eq("roomId", roomId);
+
+      if (error) {
+        console.log("error", error);
+        throw error;
+      }
+
+      queryClient.invalidateQueries({
+        queryKey: itemKeys.getPlacedItemsByRoomId(roomId),
+      });
+    },
+  });
+
 export const usePlaceItemToRoomMutation = () =>
   useMutation({
     mutationFn: async (newPlacedItem: NewPlacedItem) => {
