@@ -18,30 +18,13 @@ type FabricCanvasProps = {
     itemId: string;
     item: UpdatedPlacedItem;
   }) => void;
+  onItemDeleted: (itemId: string) => void;
 };
 
 const FabricCanvas = (props: FabricCanvasProps) => {
   const canvasRef = useRef(null);
 
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
-
-  const addNewItem = () => {
-    const rect = new fabric.Rect({
-      width: 100,
-      height: 100,
-      fill: "red",
-      data: {
-        id: "123",
-      },
-    });
-
-    fabricCanvas?.add(rect);
-
-    setTimeout(() => {
-      rect.set("fill", "blue");
-      fabricCanvas?.requestRenderAll();
-    }, 2000);
-  };
 
   useEffect(() => {
     if (!window) return;
@@ -190,6 +173,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
         const activeObjects = fabricCanvas.getActiveObjects();
 
         activeObjects.forEach((obj) => {
+          props.onItemDeleted(obj.data.id);
           fabricCanvas.remove(obj);
         });
       }
@@ -200,14 +184,10 @@ const FabricCanvas = (props: FabricCanvasProps) => {
     () => {
       window.removeEventListener("keydown", deleteHandler);
     };
-  }, [fabricCanvas]);
+  }, [fabricCanvas, props]);
 
   return (
     <div className="flex items-center justify-center w-fit h-fit overflow-hidden">
-      <Button className="absolute top-0 right-50 z-50" onClick={addNewItem}>
-        Add Item
-      </Button>
-
       <canvas ref={canvasRef} />
     </div>
   );

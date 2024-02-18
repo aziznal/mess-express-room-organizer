@@ -12,6 +12,7 @@ import {
   useGetItemsQuery,
   useGetPlacedItemsByRoomId,
   useUpdatePlacedItemMutation,
+  useDeletePlacedItemMutation,
 } from "@/lib/services/items-service";
 import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,6 +35,7 @@ export default function Editor(props: EditorProps) {
   const deleteItemMutation = useDeleteItemMutation();
   const placeItemMutation = usePlaceItemToRoomMutation();
   const updatePlacedItemMutation = useUpdatePlacedItemMutation();
+  const deletePlacedItemMutation = useDeletePlacedItemMutation();
 
   const createAndPlaceItem = async () => {
     if (!roomQuery.data?.id) return;
@@ -134,6 +136,12 @@ export default function Editor(props: EditorProps) {
             updatedPlacedItem: item,
           });
         }}
+        onItemDeleted={(itemId: string) =>
+          deletePlacedItemMutation.mutate({
+            itemId: itemId,
+            roomId: roomQuery.data.id,
+          })
+        }
       />
     </div>
   );
