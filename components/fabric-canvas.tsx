@@ -93,7 +93,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
         fill: item.data.backgroundColor,
         data: {
           id: item.data.id,
-          // type: "rect",
+          type: "rect",
         },
       });
 
@@ -113,7 +113,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
         selectable: false,
         data: {
           id: item.data.id,
-          // type: "text",
+          type: "text",
         },
       });
 
@@ -179,18 +179,27 @@ const FabricCanvas = (props: FabricCanvasProps) => {
     );
 
     itemsToUpdate.forEach((item) => {
-      const obj = fabricCanvas.getObjects().find((obj) => {
+      const matchingItems = fabricCanvas.getObjects().filter((obj) => {
         return obj.data?.id === item.data.id;
       });
 
-      if (!obj) return;
+      const rect = matchingItems.find(
+        (obj) => obj.data.type === "rect"
+      ) as fabric.Rect;
+
+      const text = matchingItems.find(
+        (obj) => obj.data.type === "text"
+      ) as fabric.Text;
+
+      if (!rect || !text) return;
 
       // coordinates are not updated to keep things smooth for the user; we're
       // already storing the coordinates in the database
-      //
+
       // Same thing for width and height
 
-      obj.set("fill", item.data.backgroundColor);
+      rect.set("fill", item.data.backgroundColor);
+      text.set("text", item.data.name);
     });
 
     fabricCanvas.requestRenderAll();
