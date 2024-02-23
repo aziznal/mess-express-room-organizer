@@ -5,7 +5,6 @@ import { fabric } from "fabric";
 
 import { PlacedItem, Room, UpdatedPlacedItem } from "@/lib/type-helpers";
 import { setupPanHandler, setupZoomHandler } from "@/lib/canvas/utils";
-import { Button } from "./ui/button";
 import debounce from "lodash.debounce";
 
 type FabricCanvasProps = {
@@ -68,97 +67,120 @@ const FabricCanvas = (props: FabricCanvasProps) => {
     };
   }, [props.room]);
 
+  // Main way items are added, removed, and updated
   useEffect(() => {
     if (!fabricCanvas) return;
 
-    const addedItemIds = fabricCanvas.getObjects().map((obj) => {
+    const existingItemIds = fabricCanvas.getObjects().map((obj) => {
       return obj.data?.id as string;
     });
 
-    props.roomItems
-      .filter((item) => !addedItemIds.includes(item.data.id))
-      .forEach((item) => {
-        const rect = new fabric.Rect({
-          width: item.data.width,
-          height: item.data.height,
-          fill: item.data.backgroundColor,
-          data: {
-            id: item.data.id,
-          },
-        });
+    const itemsToAdd = props.roomItems.filter(
+      (item) => !existingItemIds.includes(item.data.id)
+    );
 
-        rect.set({
-          left: item.x,
-          top: item.y,
-        });
-
-        const text = new fabric.Text(item.data.name, {
-          fontSize: 16,
-          fill: "white",
-          originX: "center",
-          originY: "center",
-          lockScalingX: true,
-          lockScalingY: true,
-          lockRotation: true,
-          selectable: false,
-          data: {
-            id: item.data.id,
-          },
-        });
-
-        // add text to center of rect
-        const rectCenterCoords = rect.getCenterPoint();
-
-        text.set({
-          left: rectCenterCoords.x,
-          top: rectCenterCoords.y,
-        });
-
-        const updateItemLocation = debounce(() => {
-          const left = Math.round(rect.getBoundingRect().left);
-          const top = Math.round(rect.getBoundingRect().top);
-
-          console.log("updateItemLocation", left, top);
-
-          props.onItemUpdated({
-            itemId: item.data.id,
-            item: {
-              x: left,
-              y: top,
-            },
-          });
-        }, 500);
-
-        rect.on("moving", (e) => {
-          text.set({
-            left: rect.getCenterPoint().x,
-            top: rect.getCenterPoint().y,
-          });
-
-          updateItemLocation();
-        });
-
-        rect.on("scaling", (e) => {
-          text.set({
-            left: rect.getCenterPoint().x,
-            top: rect.getCenterPoint().y,
-          });
-
-          // send item update event
-          // props.onItemUpdate({
-          //   itemId: item.data.id,
-          //   item: {
-          //     width: rect.width,
-          //     height: rect.height,
-          //     x: rect.left,
-          //     y: rect.top,
-          //   },
-          // });
-        });
-
-        fabricCanvas.add(rect);
-        fabricCanvas.add(text);
+    itemsToAdd.forEach((item) => {
+      const rect = new fabric.Rect({
+        width: item.data.width,
+        height: item.data.height,
+        fill: item.data.backgroundColor,
+        data: {
+          id: item.data.id,
+          // type: "rect",
+        },
       });
+
+      rect.set({
+        left: item.x,
+        top: item.y,
+      });
+
+      const text = new fabric.Text(item.data.name, {
+        fontSize: 16,
+        fill: "white",
+        originX: "center",
+        originY: "center",
+        lockScalingX: true,
+        lockScalingY: true,
+        lockRotation: true,
+        selectable: false,
+        data: {
+          id: item.data.id,
+          // type: "text",
+        },
+      });
+
+      // add text to center of rect
+      const rectCenterCoords = rect.getCenterPoint();
+
+      text.set({
+        left: rectCenterCoords.x,
+        top: rectCenterCoords.y,
+      });
+
+      const updateItemLocation = debounce(() => {
+        const updatedLeft = Math.round(rect.left ?? 0);
+        const updatedTop = Math.round(rect.top ?? 0);
+
+        props.onItemUpdated({
+          itemId: item.data.id,
+          item: {
+            x: updatedLeft,
+            y: updatedTop,
+          },
+        });
+      }, 500);
+
+      rect.on("moving", (e) => {
+        text.set({
+          left: rect.getCenterPoint().x,
+          top: rect.getCenterPoint().y,
+        });
+
+        updateItemLocation();
+      });
+
+      rect.on("scaling", (e) => {
+        text.set({
+          left: rect.getCenterPoint().x,
+          top: rect.getCenterPoint().y,
+        });
+
+        // send item update event
+        // props.onItemUpdate({
+        //   itemId: item.data.id,
+        //   item: {
+        //     width: rect.width,
+        //     height: rect.height,
+        //     x: rect.left,
+        //     y: rect.top,
+        //   },
+        // });
+      });
+
+      fabricCanvas.add(rect);
+      fabricCanvas.add(text);
+    });
+
+    const itemsToUpdate = props.roomItems.filter((item) =>
+      existingItemIds.includes(item.data.id)
+    );
+
+    console.log("itemsToUpdate", itemsToUpdate);
+
+    itemsToUpdate.forEach((item) => {
+      const obj = fabricCanvas.getObjects().find((obj) => {
+        return obj.data?.id === item.data.id;
+      });
+
+      if (!obj) return;
+
+      obj.set("top", item.y);
+      obj.set("left", item.x);
+      obj.set("width", item.data.width);
+      obj.set("width", item.data.height);
+      obj.set("fill", item.data.backgroundColor);
+    });
 
     fabricCanvas.requestRenderAll();
   }, [fabricCanvas, props, props.roomItems]);
