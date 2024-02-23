@@ -13,10 +13,11 @@ import {
   useGetPlacedItemsByRoomId,
   useUpdatePlacedItemMutation,
   useDeletePlacedItemMutation,
+  useUpdateItemMutation,
 } from "@/lib/services/items-service";
 import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
-import { UpdatedPlacedItem } from "@/lib/type-helpers";
+import { UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
 
 type EditorProps = {
   params: {
@@ -32,6 +33,7 @@ export default function Editor(props: EditorProps) {
   const roomItemsQuery = useGetPlacedItemsByRoomId(roomQuery.data?.id);
 
   const createItemMutation = useCreateItemMutation();
+  const updateItemMutation = useUpdateItemMutation();
   const deleteItemMutation = useDeleteItemMutation();
   const placeItemMutation = usePlaceItemToRoomMutation();
   const updatePlacedItemMutation = useUpdatePlacedItemMutation();
@@ -125,16 +127,26 @@ export default function Editor(props: EditorProps) {
         roomItems={roomItemsQuery.data ?? []}
         onItemUpdated={({
           itemId,
-          item,
+          updatedItem,
+          updatedPlacedItem,
         }: {
           itemId: string;
-          item: UpdatedPlacedItem;
+          updatedItem?: UpdatedRoomItem;
+          updatedPlacedItem?: UpdatedPlacedItem;
         }) => {
-          updatePlacedItemMutation.mutate({
-            roomId: roomQuery.data?.id,
-            itemId,
-            updatedPlacedItem: item,
-          });
+          // FIXME: this should be combined into a single update
+          if (updatedPlacedItem)
+            updatePlacedItemMutation.mutate({
+              roomId: roomQuery.data?.id,
+              itemId,
+              updatedPlacedItem,
+            });
+
+          if (updatedItem)
+            updateItemMutation.mutate({
+              itemId,
+              updatedItem,
+            });
         }}
         onItemDeleted={(itemId: string) =>
           deletePlacedItemMutation.mutate({

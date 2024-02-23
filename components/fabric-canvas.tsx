@@ -3,7 +3,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 
-import { PlacedItem, Room, UpdatedPlacedItem } from "@/lib/type-helpers";
+import {
+  PlacedItem,
+  Room,
+  UpdatedPlacedItem,
+  UpdatedRoomItem,
+} from "@/lib/type-helpers";
 import { setupPanHandler, setupZoomHandler } from "@/lib/canvas/utils";
 import debounce from "lodash.debounce";
 
@@ -12,10 +17,12 @@ type FabricCanvasProps = {
   roomItems: PlacedItem[];
   onItemUpdated: ({
     itemId,
-    item,
+    updatedItem,
+    updatedPlacedItem,
   }: {
     itemId: string;
-    item: UpdatedPlacedItem;
+    updatedItem?: UpdatedRoomItem;
+    updatedPlacedItem?: UpdatedPlacedItem;
   }) => void;
   onItemDeleted: (itemId: string) => void;
 };
@@ -124,9 +131,23 @@ const FabricCanvas = (props: FabricCanvasProps) => {
 
         props.onItemUpdated({
           itemId: item.data.id,
-          item: {
+          updatedPlacedItem: {
             x: updatedLeft,
             y: updatedTop,
+          },
+        });
+      }, 500);
+
+      const updateItemScale = debounce(() => {
+        const width = Math.round(rect.getScaledWidth() ?? 0);
+        const height = Math.round(rect.getScaledHeight() ?? 0);
+
+        // send item update event
+        props.onItemUpdated({
+          itemId: item.data.id,
+          updatedItem: {
+            width: width,
+            height: height,
           },
         });
       }, 500);
@@ -146,16 +167,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
           top: rect.getCenterPoint().y,
         });
 
-        // send item update event
-        // props.onItemUpdate({
-        //   itemId: item.data.id,
-        //   item: {
-        //     width: rect.width,
-        //     height: rect.height,
-        //     x: rect.left,
-        //     y: rect.top,
-        //   },
-        // });
+        updateItemScale();
       });
 
       fabricCanvas.add(rect);
@@ -166,8 +178,6 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       existingItemIds.includes(item.data.id)
     );
 
-    console.log("itemsToUpdate", itemsToUpdate);
-
     itemsToUpdate.forEach((item) => {
       const obj = fabricCanvas.getObjects().find((obj) => {
         return obj.data?.id === item.data.id;
@@ -175,10 +185,11 @@ const FabricCanvas = (props: FabricCanvasProps) => {
 
       if (!obj) return;
 
-      obj.set("top", item.y);
-      obj.set("left", item.x);
-      obj.set("width", item.data.width);
-      obj.set("width", item.data.height);
+      // coordinates are not updated to keep things smooth for the user; we're
+      // already storing the coordinates in the database
+      //
+      // Same thing for width and height
+
       obj.set("fill", item.data.backgroundColor);
     });
 
