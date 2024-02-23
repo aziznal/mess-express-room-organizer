@@ -118,6 +118,15 @@ export default function Editor(props: EditorProps) {
               <ListedRoomItem
                 key={item.id}
                 item={item}
+                onClick={() =>
+                  placeItemMutation.mutate({
+                    roomId: roomQuery.data?.id,
+                    itemId: item.id,
+                    x: 100,
+                    y: 100,
+                    zIndex: 1,
+                  })
+                }
                 onItemDeleted={async () => {
                   await deleteItemMutation.mutateAsync(item.id);
                   toast({

@@ -25,11 +25,13 @@ import { cn } from "@/lib/utils";
 type ListedRoomItemProps = {
   item: RoomItem;
   onItemDeleted: () => void;
+  onClick?: () => void;
 };
 
 export const ListedRoomItem = ({
   item,
   onItemDeleted,
+  onClick,
 }: ListedRoomItemProps) => {
   const updateRoomItemMutation = useUpdateItemMutation();
 
@@ -40,6 +42,7 @@ export const ListedRoomItem = ({
 
   return (
     <div
+      onClick={onClick}
       className={cn(
         "flex justify-between hover:bg-slate-700 p-4 rounded-lg transition-colors cursor-grab group",
         isDropdownOpen && "bg-slate-700"
