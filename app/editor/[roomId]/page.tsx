@@ -30,7 +30,7 @@ export const dynamic = "force-dynamic";
 export default function Editor(props: EditorProps) {
   const roomQuery = useGetRoomByIdQuery(props.params.roomId);
   const itemsQuery = useGetItemsQuery();
-  const roomItemsQuery = useGetPlacedItemsByRoomId(roomQuery.data?.id);
+  const placedItemsQuery = useGetPlacedItemsByRoomId(roomQuery.data?.id);
 
   const createItemMutation = useCreateItemMutation();
   const updateItemMutation = useUpdateItemMutation();
@@ -106,25 +106,33 @@ export default function Editor(props: EditorProps) {
         <hr className="border-slate-400" />
 
         <div className="flex flex-col overflow-y-auto">
-          {itemsQuery.data?.map((item) => (
-            <ListedRoomItem
-              key={item.id}
-              item={item}
-              onItemDeleted={async () => {
-                await deleteItemMutation.mutateAsync(item.id);
-                toast({
-                  title: "Item deleted succesfully",
-                  variant: "destructive",
-                });
-              }}
-            />
-          ))}
+          {/* FIXME later for improve performance */}
+          {itemsQuery.data
+            ?.filter(
+              (item) =>
+                !placedItemsQuery.data
+                  ?.map((karpuz) => karpuz.itemId)
+                  .includes(item.id)
+            )
+            .map((item) => (
+              <ListedRoomItem
+                key={item.id}
+                item={item}
+                onItemDeleted={async () => {
+                  await deleteItemMutation.mutateAsync(item.id);
+                  toast({
+                    title: "Item deleted succesfully",
+                    variant: "destructive",
+                  });
+                }}
+              />
+            ))}
         </div>
       </div>
 
       <FabricCanvas
         room={roomQuery.data}
-        roomItems={roomItemsQuery.data ?? []}
+        roomItems={placedItemsQuery.data ?? []}
         onItemUpdated={({
           itemId,
           updatedItem,
