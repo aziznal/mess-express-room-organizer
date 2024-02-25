@@ -83,6 +83,7 @@ export const ListedRoomItem = ({
       </AlertDialog>
 
       <div
+        onClick={onClick}
         className={cn(
           "flex justify-between hover:bg-slate-700 p-4 rounded-lg transition-colors cursor-grab group",
           isDropdownOpen && "bg-slate-700"
