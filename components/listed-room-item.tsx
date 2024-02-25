@@ -41,53 +41,7 @@ export const ListedRoomItem = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "flex justify-between hover:bg-slate-700 p-4 rounded-lg transition-colors cursor-grab group",
-        isDropdownOpen && "bg-slate-700"
-      )}
-    >
-      <div className="flex gap-2">
-        <div
-          className="w-[50px] h-[50px] rounded-lg border border-slate-400"
-          style={{
-            backgroundColor: item.backgroundColor,
-          }}
-        />
-
-        <div className="flex flex-col justify-center gap-1 text-sm">
-          <span>{item.name}</span>
-          <span className="text-slate-500">
-            {item.width}x{item.height}
-          </span>
-        </div>
-      </div>
-
-      <DropdownMenu
-        open={isDropdownOpen}
-        onOpenChange={(isOpen) => setIsDropdownOpen(isOpen)}
-      >
-        <DropdownMenuTrigger className="cursor-pointer">
-          <LucideMoreHorizontal
-            className={cn(
-              "opacity-0 text-slate-500 group-hover:opacity-100 transition-opacity",
-              isDropdownOpen && "opacity-100"
-            )}
-          />
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setIsUpdateDialogOpen(true)}>
-            Edit
-          </DropdownMenuItem>
-
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
+    <>
       <UpdateItem
         item={item}
         isLoading={updateRoomItemMutation.isPending}
@@ -127,6 +81,57 @@ export const ListedRoomItem = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+
+      <div
+        className={cn(
+          "flex justify-between hover:bg-slate-700 p-4 rounded-lg transition-colors cursor-grab group",
+          isDropdownOpen && "bg-slate-700"
+        )}
+      >
+        <div className="flex gap-2">
+          <div
+            className="w-[50px] h-[50px] rounded-lg border border-slate-400"
+            style={{
+              backgroundColor: item.backgroundColor,
+            }}
+          />
+
+          <div className="flex flex-col justify-center gap-1 text-sm">
+            <span>{item.name}</span>
+            <span className="text-slate-500">
+              {item.width}x{item.height}
+            </span>
+          </div>
+        </div>
+
+        <DropdownMenu
+          open={isDropdownOpen}
+          onOpenChange={(isOpen) => setIsDropdownOpen(isOpen)}
+        >
+          <DropdownMenuTrigger className="cursor-pointer">
+            <LucideMoreHorizontal
+              className={cn(
+                "opacity-0 text-slate-500 group-hover:opacity-100 transition-opacity",
+                isDropdownOpen && "opacity-100"
+              )}
+            />
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <DropdownMenuItem onClick={() => setIsUpdateDialogOpen(true)}>
+              Edit
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 };
