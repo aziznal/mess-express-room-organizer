@@ -18,6 +18,7 @@ import {
 import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
 import { UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
+import { useEffect } from "react";
 
 type EditorProps = {
   params: {
@@ -166,7 +167,7 @@ export default function Editor(props: EditorProps) {
             });
         }}
         onItemDeleted={(itemId: string) =>
-          deletePlacedItemMutation.mutate({
+          deletePlacedItemMutation.mutateAsync({
             itemId: itemId,
             roomId: roomQuery.data.id,
           })

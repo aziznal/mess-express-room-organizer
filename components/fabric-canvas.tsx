@@ -48,8 +48,8 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       width: props.room.width,
       height: props.room.height,
 
-      left: canvas.width! / 2 - props.room.width / 2,
-      top: canvas.height! / 2 - props.room.height / 2,
+      left: 600,
+      top: 200,
 
       strokeWidth: 2,
       fill: "transparent",
@@ -64,6 +64,10 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       hasControls: false,
       hoverCursor: "default",
       strokeLineJoin: "round",
+
+      data: {
+        id: props.room.id,
+      },
     });
 
     canvas.add(roomRect);
@@ -202,6 +206,19 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       text.set("text", item.data.name);
     });
 
+    const itemsToDelete = existingItemIds
+      .filter((id) => !props.roomItems.map((item) => item.data.id).includes(id))
+      // don't delete the room rect
+      .filter((id) => id !== props.room.id);
+
+    itemsToDelete.forEach((id) => {
+      const objects = fabricCanvas.getObjects().filter((obj) => {
+        return obj.data?.id === id;
+      });
+
+      fabricCanvas.remove(...objects);
+    });
+
     fabricCanvas.requestRenderAll();
   }, [fabricCanvas, props, props.roomItems]);
 
@@ -214,9 +231,18 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       if (e.key === "Delete") {
         const activeObjects = fabricCanvas.getActiveObjects();
 
-        activeObjects.forEach((obj) => {
-          props.onItemDeleted(obj.data.id);
-          fabricCanvas.remove(obj);
+        const deletedItemIds = activeObjects.map((obj) => {
+          return obj.data?.id as string;
+        });
+
+        deletedItemIds.forEach((id) => {
+          const objects = fabricCanvas.getObjects().filter((obj) => {
+            return obj.data?.id === id;
+          });
+
+          props.onItemDeleted(id);
+
+          fabricCanvas.remove(...objects);
         });
       }
     };
