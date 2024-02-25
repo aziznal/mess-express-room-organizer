@@ -44,17 +44,17 @@ export default function Editor(props: EditorProps) {
     if (!roomQuery.data?.id) return;
 
     const newItem = await createItemMutation.mutateAsync({
-      height: 255,
-      width: 366,
-      name: "Erdem's item",
+      height: 50,
+      width: 100,
+      name: "New Item",
       backgroundColor: "#ff0000",
     });
 
     placeItemMutation.mutate({
       roomId: roomQuery.data.id,
       itemId: newItem.id,
-      x: 100,
-      y: 100,
+      x: 600,
+      y: 400,
       zIndex: 1,
     });
   };
