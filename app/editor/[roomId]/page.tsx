@@ -47,7 +47,7 @@ export default function Editor(props: EditorProps) {
       height: 50,
       width: 100,
       name: "New Item",
-      backgroundColor: "#ff0000",
+      backgroundColor: "#879977",
     });
 
     placeItemMutation.mutate({
