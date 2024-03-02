@@ -19,6 +19,7 @@ import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
 import { UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQueryParamState } from "@/lib/hooks/useQueryParamState";
 
 type EditorProps = {
   params: {
@@ -39,6 +40,11 @@ export default function Editor(props: EditorProps) {
   const placeItemMutation = usePlaceItemToRoomMutation();
   const updatePlacedItemMutation = useUpdatePlacedItemMutation();
   const deletePlacedItemMutation = useDeletePlacedItemMutation();
+
+  const { value: itemTab, setValue: setItemTab } = useQueryParamState({
+    key: "itemTab",
+    initialValue: "placed-items",
+  });
 
   const createAndPlaceItem = async () => {
     if (!roomQuery.data?.id) return;
@@ -107,12 +113,18 @@ export default function Editor(props: EditorProps) {
         <hr className="border-slate-400" />
 
         <div className="flex flex-col overflow-y-auto">
-          <Tabs defaultValue="placed-items" className="w-[350px]">
+          <Tabs
+            defaultValue="placed-items"
+            value={itemTab ?? undefined}
+            onValueChange={setItemTab}
+            className="w-[350px]"
+          >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="placed-items">Listed items</TabsTrigger>
-              <TabsTrigger value="listed-items">Placed items</TabsTrigger>
+              <TabsTrigger value="placed-items">Placed items</TabsTrigger>
+              <TabsTrigger value="listed-items">Listed items</TabsTrigger>
             </TabsList>
-            <TabsContent value="placed-items">
+
+            <TabsContent value="listed-items">
               {/* FIXME later for improve performance */}
               {itemsQuery.data
                 ?.filter(
@@ -145,7 +157,7 @@ export default function Editor(props: EditorProps) {
                 ))}
             </TabsContent>
 
-            <TabsContent value="listed-items">
+            <TabsContent value="placed-items">
               {/* FIXME later for improve performance */}
               {itemsQuery.data
                 ?.filter((item) =>
