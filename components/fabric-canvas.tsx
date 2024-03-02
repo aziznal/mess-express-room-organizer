@@ -15,6 +15,7 @@ import debounce from "lodash.debounce";
 type FabricCanvasProps = {
   room: Room;
   roomItems: PlacedItem[];
+  onItemSelected: (itemId: string) => void;
   onItemUpdated: ({
     itemId,
     updatedItem,
@@ -172,6 +173,10 @@ const FabricCanvas = (props: FabricCanvasProps) => {
         });
 
         updateItemScale();
+      });
+
+      rect.on("mousedown", () => {
+        props.onItemSelected(item.data.id);
       });
 
       fabricCanvas.add(rect);

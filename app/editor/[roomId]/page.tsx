@@ -1,6 +1,11 @@
 "use client";
 
-import { LucideArrowLeft, LucideLoader2, LucidePlus } from "lucide-react";
+import {
+  LucideArrowLeft,
+  LucideChevronsLeft,
+  LucideLoader2,
+  LucidePlus,
+} from "lucide-react";
 import { useGetRoomByIdQuery } from "@/lib/services/rooms-service";
 import FabricCanvas from "@/components/fabric-canvas";
 import Link from "next/link";
@@ -45,6 +50,11 @@ export default function Editor(props: EditorProps) {
     key: "itemTab",
     initialValue: "placed-items",
   });
+
+  const { value: selectedItemId, setValue: setSelectedItemId } =
+    useQueryParamState({
+      key: "selectedItemId",
+    });
 
   const createAndPlaceItem = async () => {
     if (!roomQuery.data?.id) return;
@@ -195,6 +205,7 @@ export default function Editor(props: EditorProps) {
       <FabricCanvas
         room={roomQuery.data}
         roomItems={placedItemsQuery.data ?? []}
+        onItemSelected={(itemId: string) => setSelectedItemId(itemId)}
         onItemUpdated={({
           itemId,
           updatedItem,
@@ -225,6 +236,41 @@ export default function Editor(props: EditorProps) {
           })
         }
       />
+
+      {selectedItemId && (
+        <div
+          className={`
+            bg-slate-900
+            shadow
+            h-full
+            w-[400px]
+            absolute
+            top-0
+            right-0
+            z-50
+            text-white
+            p-4
+            flex
+            flex-col
+            gap-4
+            pt-12
+
+            transition-all
+            duration-300
+            custom-slide-in-from-right
+            `}
+        >
+          <div
+            className="absolute top-2 left-2 p-2 cursor-pointer hover:bg-slate-700 rounded-full transition-colors"
+            onClick={() => setSelectedItemId(null)}
+          >
+            <LucideChevronsLeft />
+          </div>
+
+          <h2 className="text-lg">Selected Item</h2>
+          <div>Selected Item: {selectedItemId}</div>
+        </div>
+      )}
     </div>
   );
 }
