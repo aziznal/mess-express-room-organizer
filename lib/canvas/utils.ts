@@ -20,10 +20,24 @@ export const setupZoomHandler = (canvas: fabric.Canvas) => {
 };
 
 export const setupPanHandler = (canvas: fabric.Canvas) => {
+  let isSpaceDown = false;
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      isSpaceDown = true;
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "Space") {
+      isSpaceDown = false;
+    }
+  });
+
   canvas.on("mouse:down", function (opt) {
     const evt = opt.e;
 
-    if (evt.altKey === true) {
+    if (isSpaceDown === true) {
       this.isDragging = true;
       this.selection = false;
       this.lastPosX = evt.clientX;
