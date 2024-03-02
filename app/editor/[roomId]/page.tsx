@@ -18,7 +18,7 @@ import {
 import { ListedRoomItem } from "@/components/listed-room-item";
 import { useToast } from "@/components/ui/use-toast";
 import { UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
-import { useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type EditorProps = {
   params: {
@@ -107,36 +107,76 @@ export default function Editor(props: EditorProps) {
         <hr className="border-slate-400" />
 
         <div className="flex flex-col overflow-y-auto">
-          {/* FIXME later for improve performance */}
-          {itemsQuery.data
-            ?.filter(
-              (item) =>
-                !placedItemsQuery.data
-                  ?.map((karpuz) => karpuz.itemId)
-                  .includes(item.id)
-            )
-            .map((item) => (
-              <ListedRoomItem
-                key={item.id}
-                item={item}
-                onClick={() =>
-                  placeItemMutation.mutate({
-                    roomId: roomQuery.data?.id,
-                    itemId: item.id,
-                    x: 100,
-                    y: 100,
-                    zIndex: 1,
-                  })
-                }
-                onItemDeleted={async () => {
-                  await deleteItemMutation.mutateAsync(item.id);
-                  toast({
-                    title: "Item deleted succesfully",
-                    variant: "destructive",
-                  });
-                }}
-              />
-            ))}
+          <Tabs defaultValue="placed-items" className="w-[350px]">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="placed-items">Listed items</TabsTrigger>
+              <TabsTrigger value="listed-items">Placed items</TabsTrigger>
+            </TabsList>
+            <TabsContent value="placed-items">
+              {/* FIXME later for improve performance */}
+              {itemsQuery.data
+                ?.filter(
+                  (item) =>
+                    !placedItemsQuery.data
+                      ?.map((karpuz) => karpuz.itemId)
+                      .includes(item.id)
+                )
+                .map((item) => (
+                  <ListedRoomItem
+                    key={item.id}
+                    item={item}
+                    onClick={() =>
+                      placeItemMutation.mutate({
+                        roomId: roomQuery.data?.id,
+                        itemId: item.id,
+                        x: 100,
+                        y: 100,
+                        zIndex: 1,
+                      })
+                    }
+                    onItemDeleted={async () => {
+                      await deleteItemMutation.mutateAsync(item.id);
+                      toast({
+                        title: "Item deleted succesfully",
+                        variant: "destructive",
+                      });
+                    }}
+                  />
+                ))}
+            </TabsContent>
+
+            <TabsContent value="listed-items">
+              {/* FIXME later for improve performance */}
+              {itemsQuery.data
+                ?.filter((item) =>
+                  placedItemsQuery.data
+                    ?.map((karpuz) => karpuz.itemId)
+                    .includes(item.id)
+                )
+                .map((item) => (
+                  <ListedRoomItem
+                    key={item.id}
+                    item={item}
+                    onClick={() =>
+                      placeItemMutation.mutate({
+                        roomId: roomQuery.data?.id,
+                        itemId: item.id,
+                        x: 100,
+                        y: 100,
+                        zIndex: 1,
+                      })
+                    }
+                    onItemDeleted={async () => {
+                      await deleteItemMutation.mutateAsync(item.id);
+                      toast({
+                        title: "Item deleted succesfully",
+                        variant: "destructive",
+                      });
+                    }}
+                  />
+                ))}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
