@@ -101,5 +101,19 @@
 }
 
 .custom-slide-in-from-right {
-  animation: 0.2s ease-out 0s 1 slideInFromRight;
+  animation: 200ms ease-out 0s 1 slideInFromRight;
+}
+
+/* slide in from right animation */
+@keyframes slideOutToRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.custom-slide-out-to-right {
+  animation: 200ms ease-out 0s 1 slideOutToRight;
 }

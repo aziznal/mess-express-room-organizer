@@ -25,6 +25,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQueryParamState } from "@/lib/hooks/useQueryParamState";
+import RightMenu from "@/components/right-menu";
 
 type EditorProps = {
   params: {
@@ -237,40 +238,10 @@ export default function Editor(props: EditorProps) {
         }
       />
 
-      {selectedItemId && (
-        <div
-          className={`
-            bg-slate-900
-            shadow
-            h-full
-            w-[400px]
-            absolute
-            top-0
-            right-0
-            z-50
-            text-white
-            p-4
-            flex
-            flex-col
-            gap-4
-            pt-12
-
-            transition-all
-            duration-300
-            custom-slide-in-from-right
-            `}
-        >
-          <div
-            className="absolute top-2 left-2 p-2 cursor-pointer hover:bg-slate-700 rounded-full transition-colors"
-            onClick={() => setSelectedItemId(null)}
-          >
-            <LucideChevronsLeft />
-          </div>
-
-          <h2 className="text-lg">Selected Item</h2>
-          <div>Selected Item: {selectedItemId}</div>
-        </div>
-      )}
+      <RightMenu
+        selectedItemId={selectedItemId}
+        setSelectedItemId={setSelectedItemId}
+      />
     </div>
   );
 }
