@@ -2,7 +2,6 @@
 
 import {
   LucideArrowLeft,
-  LucideChevronsLeft,
   LucideLoader2,
   LucidePlus,
 } from "lucide-react";

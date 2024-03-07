@@ -2,7 +2,6 @@
 
 import CreateNewRoom from "@/components/create-new-room";
 import RoomGridItem, { RoomGridItemSkeleton } from "@/components/room-grid-item";
-import ToggleDarkMode from "@/components/toggle-dark-mode";
 import {
   useCreateRoomMutation,
   useDeleteRoomMutation,
@@ -11,6 +10,7 @@ import {
 import { NewRoom } from "@/lib/type-helpers";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
+import { ToggleDarkMode } from "@/components/ToggleDarkMode";
 
 export default function RoomPage() {
   const roomsQuery = useGetRoomsQuery();

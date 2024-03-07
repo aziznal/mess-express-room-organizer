@@ -32,6 +32,7 @@ export default function Page() {
         <TodoItem>Support Rotation</TodoItem>
         <TodoItem>Room Thumbnails</TodoItem>
         <TodoItem>Refactor</TodoItem>
+        <TodoItem>Fix component naming</TodoItem>
         <TodoItem>Keyboard Shortcuts</TodoItem>
       </div>
     </div>
