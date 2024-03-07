@@ -24,8 +24,8 @@ export default function Page() {
         <TodoItem checked>Delete items</TodoItem>
         <TodoItem checked>Move items</TodoItem>
         <TodoItem checked>Separate items into placed / available for placement</TodoItem>
+        <TodoItem checked>Fix support for dark mode</TodoItem>
 
-        <TodoItem>Fix support for dark mode</TodoItem>
         <TodoItem>Multiple item edit / move / delete</TodoItem>
         <TodoItem>Implement item edit menu</TodoItem>
         <TodoItem>Add context menu</TodoItem>
