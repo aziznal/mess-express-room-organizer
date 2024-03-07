@@ -1,10 +1,20 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
+import { LucideChevronLeft } from "lucide-react";
+import Link from "next/link";
+
 export default function Page() {
   return (
-    <div className="flex flex-col h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold mb-4">Roadmap</h1>
+    <div className="flex flex-col h-screen justify-center mx-auto w-[500px]">
+      <div className="flex gap-2 items-center mb-4 w-full -ml-[77px]">
+        <Link className="flex gap-2 items-center" href="/">
+          <LucideChevronLeft size={24} />
+          Back
+        </Link>
+
+        <h1 className="text-2xl font-bold  flex gap-2 items-center">Roadmap</h1>
+      </div>
 
       <div className="flex flex-col gap-2">
         <TodoItem checked>Add room dashboard</TodoItem>
