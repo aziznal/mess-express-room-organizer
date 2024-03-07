@@ -1,9 +1,7 @@
 "use client";
 
 import CreateNewRoom from "@/components/create-new-room";
-import RoomGridItem, {
-  RoomGridItemSkeleton,
-} from "@/components/room-grid-item";
+import RoomGridItem, { RoomGridItemSkeleton } from "@/components/room-grid-item";
 import ToggleDarkMode from "@/components/toggle-dark-mode";
 import {
   useCreateRoomMutation,
@@ -20,9 +18,20 @@ export default function RoomPage() {
 
   const { toast } = useToast();
 
+  const deleteRoom = async (roomId: string) => {
+    await deleteRoomMutation.mutateAsync(roomId);
+
+    toast({
+      title: "Room deleted succesfully",
+      variant: "destructive",
+    });
+  };
+
   return (
     <div className="flex flex-col p-4 items-start">
       <ToggleDarkMode />
+
+      <div></div>
 
       <div className="text-2xl font-bold mt-16">Welcome to MessExpress™</div>
 
@@ -52,17 +61,7 @@ export default function RoomPage() {
         )}
 
         {roomsQuery.data?.map((room) => (
-          <RoomGridItem
-            key={room.id}
-            room={room}
-            onDeleted={async () => {
-              await deleteRoomMutation.mutateAsync(room.id);
-              toast({
-                title: "Room deleted succesfully",
-                variant: "destructive",
-              });
-            }}
-          />
+          <RoomGridItem key={room.id} room={room} onDeleted={() => deleteRoom(room.id)} />
         ))}
       </div>
     </div>
