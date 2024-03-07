@@ -3,14 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
 
-import {
-  PlacedItem,
-  Room,
-  UpdatedPlacedItem,
-  UpdatedRoomItem,
-} from "@/lib/type-helpers";
+import { PlacedItem, Room, UpdatedPlacedItem, UpdatedRoomItem } from "@/lib/type-helpers";
 import { setupPanHandler, setupZoomHandler } from "@/lib/canvas/utils";
 import debounce from "lodash.debounce";
+import { useDarkMode } from "./ToggleDarkMode";
 
 type FabricCanvasProps = {
   room: Room;
@@ -33,6 +29,8 @@ const FabricCanvas = (props: FabricCanvasProps) => {
 
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null);
 
+  const { isDarkMode } = useDarkMode();
+
   useEffect(() => {
     if (!window) return;
 
@@ -54,7 +52,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
 
       strokeWidth: 2,
       fill: "transparent",
-      stroke: "black",
+      stroke: isDarkMode ? "white" : "black",
       strokeUniform: true,
       lockScalingX: true,
       lockScalingY: true,
@@ -87,9 +85,7 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       return obj.data?.id as string;
     });
 
-    const itemsToAdd = props.roomItems.filter(
-      (item) => !existingItemIds.includes(item.data.id)
-    );
+    const itemsToAdd = props.roomItems.filter((item) => !existingItemIds.includes(item.data.id));
 
     itemsToAdd.forEach((item) => {
       const rect = new fabric.Rect({
@@ -183,22 +179,16 @@ const FabricCanvas = (props: FabricCanvasProps) => {
       fabricCanvas.add(text);
     });
 
-    const itemsToUpdate = props.roomItems.filter((item) =>
-      existingItemIds.includes(item.data.id)
-    );
+    const itemsToUpdate = props.roomItems.filter((item) => existingItemIds.includes(item.data.id));
 
     itemsToUpdate.forEach((item) => {
       const matchingItems = fabricCanvas.getObjects().filter((obj) => {
         return obj.data?.id === item.data.id;
       });
 
-      const rect = matchingItems.find(
-        (obj) => obj.data.type === "rect"
-      ) as fabric.Rect;
+      const rect = matchingItems.find((obj) => obj.data.type === "rect") as fabric.Rect;
 
-      const text = matchingItems.find(
-        (obj) => obj.data.type === "text"
-      ) as fabric.Text;
+      const text = matchingItems.find((obj) => obj.data.type === "text") as fabric.Text;
 
       if (!rect || !text) return;
 
