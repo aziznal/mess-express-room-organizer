@@ -10,6 +10,7 @@ import {
 } from "@/lib/services/rooms-service";
 import { NewRoom } from "@/lib/type-helpers";
 import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
 
 export default function RoomPage() {
   const roomsQuery = useGetRoomsQuery();
@@ -31,7 +32,9 @@ export default function RoomPage() {
     <div className="flex flex-col p-4 items-start">
       <ToggleDarkMode />
 
-      <div></div>
+      <Link className="absolute right-20 top-[30px] hover:underline" href="/roadmap">
+        Roadmap
+      </Link>
 
       <div className="text-2xl font-bold mt-16">Welcome to MessExpress™</div>
 
